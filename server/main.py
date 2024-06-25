@@ -1,10 +1,13 @@
-from fastapi import FastAPI, HTTPException,Cookie,Response
+from fastapi import FastAPI, HTTPException, Header,Request,Response
 # adding this comment to make change try to make a pull request
 from pydantic import BaseModel
 from typing import Optional, Union 
 from databases import Database
 import httpx
 import asyncio
+import random
+import hashlib
+from functions import set_otp
 """ /get_data 
 expect username,password
 if valid username, password:
@@ -13,11 +16,16 @@ return data(byte,base64)
 except   username,password,key
 if valid username,password:
     replace data with new data
-
+=====
 
 """
-users = {}
 
+
+
+
+
+    
+users = {}
 app = FastAPI()
 class Get(BaseModel):
     password:str
@@ -26,19 +34,40 @@ class Post(BaseModel):
     password:str
     key:bytes
 
+
+
 @app.get("/")
 async def root():
     return "welcome to the server made by ravindra kumar saini"
+
+
+
+
+
+
 @app.post("/get_data/{username}")
-async def get_data(username:str,new:Get):
+async def get_data(username:str,new:Get,response:Response):
+    password = new.password
     username = username
-    database = Database('sqlite+aiosqlite:///database.db')
-    await database.connect()
-    rows = await database.fetch_one("select * from user where username=:username and password=:password;",{"username":username,"password":new.password})
-    if rows is None:
-        raise HTTPException(403,"No such username exits here")
-    else:
-        return dict(rows)["key"]
+    async with Database("sqlite+aiosqlite:///database.db") as database:
+        async with database.transaction():
+            row = await database.fetch_one("select key from user where username=:username and password=:password;",{"username":username,"password":password})
+            row = dict(row)
+            if row == 0:
+                raise HTTPException(403,f"no username found {username}")
+            else:
+                response.set_cookie(key="cookie",value=await set_otp(username,password))
+                return  row["key"]
+
+
+
+
+
+
+
+
+
+
 @app.post("/set_data/{username}")
 async def set_data(new:Post,username:str):
     username = username
