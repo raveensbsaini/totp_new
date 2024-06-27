@@ -1,13 +1,13 @@
 from fastapi import FastAPI, HTTPException, Header,Request,Response
-# adding this comment to make change try to make a pull request
+from contextlib import asynccontextmanager
 from pydantic import BaseModel
-from typing import Optional, Union 
+from typing import AsyncContextManager, Optional, Union 
 from databases import Database
 import httpx
 import asyncio
 import random
 import hashlib
-from functions import set_otp
+from functions import set_otp,make_hash
 """ /get_data 
 expect username,password
 if valid username, password:
@@ -19,14 +19,15 @@ if valid username,password:
 =====
 
 """
-
-
-
-
+database = Database("sqlite+aiosqlite:///database.db")
+@asynccontextmanager
+async def lifespan(app:FastAPI):
+    await database.connect()
+    yield
+    await  database.disconnect()
 
     
-users = {}
-app = FastAPI()
+app = FastAPI(lifespan=lifespan)
 class Get(BaseModel):
     password:str
     
@@ -49,15 +50,15 @@ async def root():
 async def get_data(username:str,new:Get,response:Response):
     password = new.password
     username = username
-    async with Database("sqlite+aiosqlite:///database.db") as database:
-        async with database.transaction():
-            row = await database.fetch_one("select key from user where username=:username and password=:password;",{"username":username,"password":password})
-            row = dict(row)
-            if row == 0:
-                raise HTTPException(403,f"no username found {username}")
-            else:
-                response.set_cookie(key="cookie",value=await set_otp(username,password))
-                return  row["key"]
+    async with database.transaction():
+        await database.execute("create table if not exists user( id integer primary key autoincrement, username text not null, password text not null, key blob default None,cookie text unique default None) ;")
+        row = await database.fetch_one("select key from user where username=:username and password=:password;",{"username":username,"password":password})
+            
+    if row is None:
+        raise HTTPException(403,f"no username found {username}")
+    else:
+        response.set_cookie(key="session_cookie",value= await set_otp(username,password,database),max_age=3600)
+        return  row["key"]
 
 
 
