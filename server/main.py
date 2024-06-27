@@ -23,6 +23,7 @@ database = Database("sqlite+aiosqlite:///database.db")
 @asynccontextmanager
 async def lifespan(app:FastAPI):
     await database.connect()
+    await database.execute("create table if not exists user( id integer primary key autoincrement, username text not null, password text not null, key blob default None,cookie text unique default None) ;")
     yield
     await  database.disconnect()
 
@@ -51,7 +52,7 @@ async def get_data(username:str,new:Get,response:Response):
     password = new.password
     username = username
     async with database.transaction():
-        await database.execute("create table if not exists user( id integer primary key autoincrement, username text not null, password text not null, key blob default None,cookie text unique default None) ;")
+        
         row = await database.fetch_one("select key from user where username=:username and password=:password;",{"username":username,"password":password})
             
     if row is None:

@@ -7,7 +7,7 @@ import secrets
 database = Database("sqlite+aiosqlite:///database.db")
 def make_hash(string:str):
     string = string.encode()
-    hasher = hashlib.sha256(object)
+    hasher = hashlib.sha256(string)
     return hasher.hexdigest()    
 
 
@@ -20,8 +20,7 @@ async def set_otp(username,password,database):
 
             row = await database.fetch_one("select id from user where cookie =:cookie and username=:username and password =:password;",{"cookie":cookie,"username":username,"password":password})
             if row is None or  len(dict(row)) == 0:
-                cookie = make_hash(cookie)
-                await database.execute("insert into user(username,password,cookie) values(:username,:password,:cookie)",{"username":username,"password":password,"cookie":cookie})
+                await database.execute("insert into user(username,password,cookie) values(:username,:password,:cookie)",{"username":username,"password":password,"cookie":make_hash(cookie)})
                 check = False
                 return cookie
             else:
