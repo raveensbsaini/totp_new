@@ -1,0 +1,17 @@
+html body {
+  margin: 0%;
+  padding: 0%;
+  height: 100%;
+  background-color: black;
+  color: white;
+}
+
+#navbar {
+  text-align: center;
+  text-transform: capitalize;
+  text-shadow: aquamarine;
+  background-color: black;
+  color: white;
+  height: 40px;
+
+}

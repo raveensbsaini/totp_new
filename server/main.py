@@ -23,7 +23,9 @@ database = Database("sqlite+aiosqlite:///database.db")
 @asynccontextmanager
 async def lifespan(app:FastAPI):
     await database.connect()
-    await database.execute("create table if not exists user( id integer primary key autoincrement, username text not null, password text not null, key blob default None,cookie text unique default None) ;")
+    await database.execute("create table if not exists user( id integer primary key autoincrement, username text not null, password text not null, key blob default None) ;")
+
+    await database.execute("create table if not exists cookie(id integer primary key autoincrement,user_id integer not null,cookie text not null);")
     yield
     await  database.disconnect()
 
@@ -35,7 +37,8 @@ class Get(BaseModel):
 class Post(BaseModel):
     password:str
     key:bytes
-
+class Get_cookie(BaseModel):
+    cookie:str
 
 
 @app.get("/")
@@ -53,23 +56,33 @@ async def get_data(username:str,new:Get,response:Response):
     username = username
     async with database.transaction():
         
-        row = await database.fetch_one("select key from user where username=:username and password=:password;",{"username":username,"password":password})
+        row = await database.fetch_one("select * from user where username=:username and password=:password;",{"username":username,"password":password})
             
     if row is None:
         raise HTTPException(403,f"no username found {username}")
     else:
-        response.set_cookie(key="session_cookie",value= await set_otp(username,password,database),max_age=3600)
+        row = dict(row)
+        print("row",row)
+        user_id  = row["id"]
+        print("user_id " ,user_id)
+        cookie = await set_otp(username,password,database)
+        print("cookie",cookie)
+        response.set_cookie(key="session_cookie",value=cookie,max_age=3600,domain="https://0.0.0.0:8001/index.html)")
+        async with database.transaction():
+            
+            await database.execute("insert into cookie(user_id,cookie) values(:user_id,:cookie)",{"user_id":user_id,"cookie":cookie})
         return  row["key"]
 
 
-
-
-
-
-
-
-
-
+# @app.post("/get_data_with_cookie")
+# async def get_data_with_cookie(new1:Get_cookie):
+#     cookie = new1.cookie;
+#     async with database.transaction():
+    
+         
+              
+                   
+                        
 @app.post("/set_data/{username}")
 async def set_data(new:Post,username:str):
     username = username

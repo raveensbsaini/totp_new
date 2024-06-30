@@ -1,2 +1,2 @@
 create table if not exists user( id integer primary key autoincrement, username text not null, password text not null, key blob default None);
-create table if not exists cookies(id integer ,cookie text not null,host text not null,user_agent text not null);
+create table if not exists cookies(id integer primary key autoincrement,user_id integer not null,cookie text not null);
