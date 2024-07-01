@@ -1,0 +1,53 @@
+html body {
+  margin: 0%;
+  padding: 0%;
+  background-color: black;
+}
+
+.main {
+  background-color: black;
+  position: absolute;
+  left: 35%;
+  border: solid white 1px;
+  width: 30%;
+  text-align: center;
+  height: 70%;
+  font-size: large;
+
+}
+
+#header {
+  margin-top: 10%;
+  margin-bottom: 10%;
+  font-size: 70px;
+}
+
+#username {
+  background-color: black;
+  width: 80%;
+  height: 50px;
+  color: white;
+}
+
+#password {
+  background-color: black;
+  color: white;
+  width: 80%;
+  height: 50px;
+}
+
+#recover_key {
+  background-color: black;
+  height: 50px;
+  color: white;
+  width: 80%;
+}
+
+#haveanaccount {
+  font-size: 30px;
+}
+
+button {
+  height: 50px;
+  width: 30%;
+}
