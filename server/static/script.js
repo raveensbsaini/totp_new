@@ -16,6 +16,30 @@ function display(parent,list){
   };
 };
 
+async function set_data(username,password,key){
+  let url = "/set_data/" + encodeURIComponent(username);
+
+  password = CryptoJS.SHA256(password).toString();
+  let data = {"key":key,
+              "password":password
+              };
+  window.data = data;
+  let object = {
+                "method":"POST",
+                "headers":{"Content-Type":"application/json"},
+                "body":JSON.stringify(data)
+                
+                };
+  let res = await fetch(url,object)
+  if(res.status != 200){
+    document.querySelector("#add_key_messaage").innerHTML = "cannot add app some error";
+    
+  }
+  else{
+    window.location.href = "/web/index.html";
+  };
+
+};
 
 async function main(cookie) {
   let url = "/cookie" 
@@ -33,38 +57,54 @@ async function main(cookie) {
   let key = body["key"];
   let password_hash = body["password"];
   let username = body["username"];
+  window.username = username;
   window.key = key;
   if ( typeof(window.password) == "undefined"){
     display("result",["enter_password"]);
     document.querySelector("#click_password").onclick = () => {
       document.querySelector("#enter_password_message").innerHTML = "";
       let check = document.querySelector("#enter_password_text").value;
-      let p = check;
+      let  p = document.querySelector("#enter_password_text").value;
       check = CryptoJS.SHA256(check).toString();
       if (check == password_hash){
         window.password = p;
         display("result",["add_key","if_key"]);
         document.querySelector("#welcome").innerHTML = `welcome ${username}`;
         if (key == "None"){
-          console.log("this function works key == ");
           document.querySelector("#none_key").innerHTML = "no app present please add some";
         }
-        else {};
+        else {
+          let decrypted_data = CryptoJS.AES.decrypt(window.key,window.password);
+          decrypted_data = decrypted_data.toString(CryptoJS.enc.Utf8);
+          
+          decrypted_data = JSON.parse(decrypted_data);
+          window.decrypted_data  = decrypted_data;
+
+          let parent = document.querySelector("#ordered_list")
+          for ( let i in decrypted_data) {
+            const element = document.createElement("li");
+            element.innerHTML = `${i} : ${decrypted_data[i]}`;
+            parent.appendChild(element);
+          };
+
+        };
         document.querySelector("#add_app").onclick = () =>{
-          console.log("user want to add app");
-          console.log(window.key);
+          let a;
           if (key == "None"){
-            let a  = {};
+             a  = {};
+          }
+          else {
+             a = window.decrypted_data;
+          };
+
             let a_key = document.querySelector("#name_of_app").value;
             let a_value = document.querySelector("#secret_key").value;
             a[a_key] = a_value;
-            console.log(a,typeof(a));
             a = JSON.stringify(a);
-            console.log(a,typeof(a));
-            console.log(window.password);
             var encrypt = CryptoJS.AES.encrypt(a,window.password);
-            console.log(encrypt,typeof(encrypt));
-          };
+            window.encrypt = encrypt.toString();
+            localStorage.setItem("encrypted",window.encrypt);
+            set_data(username,window.password,window.encrypt);
         };
       }
       else{
@@ -87,21 +127,15 @@ function get_cookie(name){
 
 };
 if (document.cookie.length === 0){
-  console.log("there is no cookie");
   window.location.href = "/web/login/index.html";
-  localStorage.setItem("reason",'empty cookie');
 }
 else {
   let session_cookie = get_cookie("session_cookie");
   if (session_cookie == ""){
-    console.log("cookie exits but no cookie named session_cookie");
     localStorage.setItem("reason","cookie exits but no session cookie");
-    window.location.href = "./login/index.html";
   }
   else {
     main(session_cookie);
-    console.log(`this is your cookie ${session_cookie} waiting for show you some code`);
-    localStorage.setItem("reason","cookie exits name session");
 
   };
 };

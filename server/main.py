@@ -28,7 +28,7 @@ database = Database("sqlite+aiosqlite:///database.db")
 @asynccontextmanager
 async def lifespan(app:FastAPI):
     await database.connect()
-    await database.execute("create table if not exists user( id integer primary key autoincrement,username text not null, password text not null,recovery_key text default None, key blob default None) ;")
+    await database.execute("create table if not exists user( id integer primary key autoincrement,username text not null, password text not null,recovery_key text default None, key text default None) ;")
 
     await database.execute("create table if not exists cookies(id integer primary key autoincrement,user_id integer not null,cookie text not null);")
     yield
@@ -53,7 +53,7 @@ class Get(BaseModel):
     
 class Post(BaseModel):
     password:str
-    key:bytes
+    key:str
 class Get_cookie(BaseModel):
     cookie:str
 
@@ -140,21 +140,17 @@ async def signup(username:str,sign:Sign,reponse:Response):
         
     else:
         raise HTTPException(403,f"{username} alread exists try with another username")
-                   
-                        
 @app.post("/set_data/{username}")
-async def set_data(new:Post,username:str):
-    username = username
-    database = Database("sqlite+aiosqlite:///database.db")
-    await database.connect()
-    # check if the username exits with its password then after do a change otherwise return httpsexception
-    row = await database.fetch_one("select * from user where username=:username and password=:password",{"username":username,"password":new.password})
-    print("row",row)
+async def set_data(username:str,new:Post):
+    password = new.password
+    key = new.key
+    row = await database.fetch_one("select * from user where username=:username and password=:password;",{"username":username,"password":password})
     if row is None:
-        print(row == None)
-        raise HTTPException(403,"no such username exits here")
-    query = "UPDATE user SET key=:key where username=:username and password=:password;"
-    values = {"username":username,"password":new.password,"key":new.key}   
-    await database.execute(query=query,values=values)                 
-    return "updated"
-    
+        raise HTTPException(403,"either username or password is incorrect")
+    else:
+        row = dict(row)
+        id = row["id"]
+        async with database.transaction():
+            await database.execute("update user set key =:new_key where id =:id;",{"new_key":key,"id":id})
+        return "success"
+        

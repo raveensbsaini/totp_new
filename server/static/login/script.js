@@ -1,5 +1,3 @@
-console.log("this is a test")
-
 async function main(url,data){
   let res = await fetch(url,{
     method:"POST",
@@ -8,9 +6,6 @@ async function main(url,data){
     'Content-Type': 'application/json' // Specify JSON content
   }
   });
-  console.log(res);
-  console.log("body",await res.json());
-  console.log("headres",res.headers);
   if (res.status == 200){
     window.location.href = "/web/index.html"
   }
@@ -21,7 +16,6 @@ async function main(url,data){
 
 document.addEventListener('DOMContentLoaded',()=>{
   let element = document.querySelector("#signup");
-  console.log(element);
   element.onclick = function (){
     window.location.href = "../signup/index.html";
     

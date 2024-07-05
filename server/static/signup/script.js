@@ -12,8 +12,6 @@ async function main(username,password,recovery_key){
                 body:JSON.stringify(data)
                 }; 
   let res = await fetch(url,object);
-  console.log(res);
-  console.log(res.status,typeof(res.status),res.statusText,typeof(res.statusText));
   if (res.status == 200){
     window.location.href = "/web/index.html";
   }
