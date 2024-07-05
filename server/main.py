@@ -1,3 +1,4 @@
+from logging import raiseExceptions
 from fastapi import FastAPI, HTTPException, Header,Request,Response
 from contextlib import asynccontextmanager
 from pydantic import BaseModel
@@ -88,9 +89,37 @@ async def get_data(username:str,new:Get,response:Response):
         return  {"message":"send successfull cookie"}
 
 
-# @app.post("/get_data_with_cookie")
-# async def get_data_with_cookie(new1:Get_cookie): #     cookie = new1.cookie;
-#     async with database.transaction():
+@app.post("/cookie")
+async def get_data_with_cookie(new1:Get_cookie): #     cookie = new1.cookie;
+    cookie = new1.cookie;
+    row = await database.fetch_one("select user_id from cookies where cookie = :cookie;",{"cookie":cookie});
+    if row is None:
+        raise HTTPException(403,"no such cookie found.")
+    else:
+        row = dict(row)
+        user_id = row["user_id"]
+        row = await database.fetch_one("select * from user where id=:id;",{"id":user_id})
+        if row is None:
+            raise HTTPException(403,"no such user found");
+        else:
+            row = dict(row)
+            key = row["key"]
+            print("key",key)
+        return row
+        
+    
+
+
+
+
+
+
+
+
+
+
+
+    
 @app.post("/signup/{username}")
 async def signup(username:str,sign:Sign,reponse:Response):
     password = sign.password

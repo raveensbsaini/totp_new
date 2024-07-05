@@ -9,9 +9,37 @@ html body {
 #navbar {
   text-align: center;
   text-transform: capitalize;
-  text-shadow: aquamarine;
   background-color: black;
   color: white;
   height: 40px;
 
+}
+
+#result {
+  position: absolute;
+  left: 35%;
+  text-align: center;
+  text-transform: capitalize;
+  color: white;
+  background-color: black;
+  border: solid white 2px;
+  height: 100%;
+  width: 30%;
+
+
+}
+
+#name_of_app {
+  background-color: black;
+  color: white;
+}
+
+#secret_key {
+  background-color: black;
+  color: white;
+}
+
+#add_app {
+  background-color: black;
+  color: white;
 }

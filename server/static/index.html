@@ -3,6 +3,7 @@
 
 <head>
   <link rel='stylesheet' href="style.css">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/crypto-js/4.1.1/crypto-js.min.js"></script>
   <script src="script.js"></script>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=:, initial-scale=1.0">
@@ -12,6 +13,39 @@
 <body>
   <div id="navbar">
     totp authentictor
+  </div>
+  <div id="result">
+
+
+    <div id="enter_password">
+      <input type="text" placeholder="Enter password" required id="enter_password_text">
+      <br>
+      <button id="click_password">Click Here</button>
+      <br>
+      <p id="enter_password_message"></p>
+    </div>
+
+
+    <div id="if_key">
+      <p id="welcome"></p>
+      <br>
+      <p id="none_key">there is no key</p>
+    </div>
+
+
+
+    <div id="add_key">
+      <p>add key</p>
+      <input type="text" id="name_of_app" placeholder="name of app" required min="5">
+      <br>
+      <input type="text" id="secret_key" placeholder="secret_key" required min="5">
+      <br>
+      <button id="add_app">add</button>
+      <p id="add_key_message"></p>
+    </div>
+
+
+
   </div>
 </body>
 
