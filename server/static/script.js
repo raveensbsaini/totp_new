@@ -83,7 +83,8 @@ async function main(cookie) {
           let parent = document.querySelector("#ordered_list")
           for ( let i in decrypted_data) {
             const element = document.createElement("li");
-            element.innerHTML = `${i} : ${decrypted_data[i]}`;
+            let token = window.otplib.authenticator.generate(decrypted_data[i]);
+            element.innerHTML = `${i} : ${token}`;
             parent.appendChild(element);
           };
 
