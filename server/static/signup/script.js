@@ -13,7 +13,7 @@ async function main(username,password,recovery_key){
                 }; 
   let res = await fetch(url,object);
   if (res.status == 200){
-    window.location.href = "/web/index.html";
+    window.location.href = "/index.html";
   }
   else {
    let element_error = document.querySelector("#error");

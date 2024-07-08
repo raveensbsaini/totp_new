@@ -36,11 +36,11 @@ async def lifespan(app:FastAPI):
     
 app = FastAPI(lifespan=lifespan)
 
-app.mount("/web", StaticFiles(directory="static", html=True), name="static")
 
 origins = [
     "http://localhost:8001"
 ]
+
 app.add_middleware(
     CORSMiddleware,
     allow_origins=origins,
@@ -57,6 +57,7 @@ class Post(BaseModel):
 class Get_cookie(BaseModel):
     cookie:str
 
+
 class Sign(BaseModel):
     password:str
     recovery_key:str
@@ -66,7 +67,7 @@ async def root():
     return "welcome to the server made by ravindra kumar saini"
 
 
-@app.post("/get_data/{username}")
+@app.post("/api/get_data/{username}")
 # assumption here this route is only used for login puropse only
 async def get_data(username:str,new:Get,response:Response):
     password = new.password
@@ -115,9 +116,18 @@ async def get_data_with_cookie(new1:Get_cookie): #     cookie = new1.cookie;
 
 
 
+@app.get("/s")
+async def signup3():
+    ...
+
+@app.post("/s")
+async def signup2():
+    ...
 
 
-
+@app.post("/signup/")
+async def signup1(username:str,sign:Sign,reponse:Response):
+    ...
 
     
 @app.post("/signup/{username}")
@@ -153,4 +163,5 @@ async def set_data(username:str,new:Post):
         async with database.transaction():
             await database.execute("update user set key =:new_key where id =:id;",{"new_key":key,"id":id})
         return "success"
-        
+
+app.mount("/", StaticFiles(directory="static", html=True), name="static")

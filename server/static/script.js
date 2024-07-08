@@ -36,7 +36,7 @@ async function set_data(username,password,key){
     
   }
   else{
-    window.location.href = "/web/index.html";
+    window.location.href = "/index.html";
   };
 
 };
@@ -51,7 +51,7 @@ async function main(cookie) {
               
   let res = await fetch(url,object);
   if (res.status != 200){
-    window.location.href = "/web/login/index.html";
+    window.location.href = "/login/index.html";
   };
   let body = await res.json();
   let key = body["key"];
@@ -100,12 +100,19 @@ async function main(cookie) {
 
             let a_key = document.querySelector("#name_of_app").value;
             let a_value = document.querySelector("#secret_key").value;
-            a[a_key] = a_value;
-            a = JSON.stringify(a);
-            var encrypt = CryptoJS.AES.encrypt(a,window.password);
-            window.encrypt = encrypt.toString();
-            localStorage.setItem("encrypted",window.encrypt);
-            set_data(username,window.password,window.encrypt);
+            try  {
+                let random = window.otplib.authenticator.generate(a_value);
+                a[a_key] = a_value;
+                a = JSON.stringify(a);
+                var encrypt = CryptoJS.AES.encrypt(a,window.password);
+                window.encrypt = encrypt.toString();
+                localStorage.setItem("encrypted",window.encrypt);
+                set_data(username,window.password,window.encrypt);
+            }
+            catch {
+              document.querySelector("#add_key_message").innerHTML = "this secrket key is not valid check it again";
+            };
+            
         };
       }
       else{
@@ -128,12 +135,12 @@ function get_cookie(name){
 
 };
 if (document.cookie.length === 0){
-  window.location.href = "/web/login/index.html";
+  window.location.href = "/login/index.html";
 }
 else {
   let session_cookie = get_cookie("session_cookie");
   if (session_cookie == ""){
-    localStorage.setItem("reason","cookie exits but no session cookie");
+    window.location.href = "/login/index.html"
   }
   else {
     main(session_cookie);

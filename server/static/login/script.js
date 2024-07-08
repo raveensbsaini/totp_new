@@ -7,7 +7,7 @@ async function main(url,data){
   }
   });
   if (res.status == 200){
-    window.location.href = "/web/index.html"
+    window.location.href = "/index.html"
   }
   else{
     document.querySelector("#error").innerHTML = "either username or password is not correct. Please try again."
