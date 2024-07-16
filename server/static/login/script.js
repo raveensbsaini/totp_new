@@ -1,5 +1,3 @@
-console.log("this is a test")
-
 async function main(url,data){
   let res = await fetch(url,{
     method:"POST",
@@ -8,31 +6,30 @@ async function main(url,data){
     'Content-Type': 'application/json' // Specify JSON content
   }
   });
-  console.log(res);
-  console.log("body",await res.json());
-  console.log("headres",res.headers);
+  if (res.status == 200){
+    window.location.href = "/index.html"
+  }
+  else{
+    document.querySelector("#error").innerHTML = "either username or password is not correct. Please try again."
+  };
 };
 
 document.addEventListener('DOMContentLoaded',()=>{
   let element = document.querySelector("#signup");
-  console.log(element);
   element.onclick = function (){
     window.location.href = "../signup/index.html";
     
   };
-  console.log("this is line no 10");
   let element_login = document.querySelector("#login");
-  console.log(element_login);
-  console.log("this is line no 13");
   element_login.onclick = function () {
-    console.log("login button clicked");
     let username = document.querySelector("#username").value;
-    username = encodeURIComponent(username);    const password = document.querySelector("#password").value;
+    username = encodeURIComponent(username);
+    let password = document.querySelector("#password").value;
+    password = CryptoJS.SHA256(password).toString();
     let data = {"password":password}
     data = JSON.stringify(data);
-    let url = "http://0.0.0.0:8000/get_data/";
+    let url = "/get_data/";
     url = url + username;
-    console.log(url);
     main(url,data);
     
   };

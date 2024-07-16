@@ -1,0 +1,74 @@
+html body {
+  margin: 0%;
+  padding: 0%;
+  background-color: black;
+}
+
+.main {
+  background-color: black;
+  position: absolute;
+  left: 35%;
+  border: solid white 1px;
+  width: 30%;
+  text-align: center;
+  height: 70%;
+  font-size: large;
+
+}
+
+#header {
+  margin-top: 10%;
+  margin-bottom: 10%;
+  font-size: 70px;
+  color: white;
+}
+
+#username {
+  background-color: black;
+  width: 80%;
+  height: 50px;
+  color: white;
+}
+
+#username::placeholder {
+  font-size: 25px;
+}
+
+#password {
+  background-color: black;
+  color: white;
+  width: 80%;
+  height: 50px;
+}
+
+#password::placeholder {
+  font-size: 25px;
+}
+
+#new_user {
+  font-size: 30px;
+  color: white;
+}
+
+button {
+  height: 50px;
+  width: 30%;
+}
+
+#error {
+  color: white;
+  font-size: 25px;
+}
+
+html {
+  --s: 100px;
+  /* control the size*/
+  --c1: #392b2b;
+  --c2: #1b0e0e;
+
+  --c: var(--c2) 20% 30%;
+  background:
+    linear-gradient(135deg, #0000 20%, var(--c), #0000 0),
+    repeating-linear-gradient(45deg, var(--c), var(--c1) 0 70%);
+  background-size: var(--s) var(--s);
+}

@@ -17,11 +17,13 @@ function get_cookie(name){
 
 console.log(document.cookie.length);
 if (document.cookie.length === 0){
+  console.log("there is no cookie");
   window.location.href = "./login/index.html";
 }
 else {
   let session_cookie = get_cookie("session_cookie");
   if (session_cookie == ""){
+    console.log("cookie exits but not exact one");
     window.location.href = "./login/index.html";
   }
   else {

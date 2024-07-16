@@ -1,0 +1,88 @@
+html body {
+  margin: 0%;
+  padding: 0%;
+  height: 100%;
+  background-color: black;
+  color: white;
+}
+
+/* #navbar { */
+/* text-align: center; */
+/* text-transform: capitalize; */
+/* font-size: 30px; */
+/* background-color: black; */
+/* color: white; */
+/* height: 40px; */
+
+/* } */
+
+#result {
+  position: absolute;
+  left: 35%;
+  text-align: center;
+  text-transform: capitalize;
+  color: white;
+  background-color: black;
+  border: solid white 2px;
+  height: 100%;
+  width: 30%;
+
+
+}
+
+#add_app {
+  background-color: black;
+  color: white;
+  font-size: 25px;
+  width: 100px;
+  height: 50px;
+}
+
+#add_key_title {
+  font-size: 25px;
+  text-transform: capitalize;
+}
+
+#enter_password_text {
+  background-color: black;
+  color: white;
+  width: 300px;
+  height: 50px;
+  font-size: 25px;
+}
+
+#enter_password_text::placeholder {
+  font-size: 25px;
+}
+
+#click_password {
+  background-color: black;
+  color: white;
+  font-size: 25px;
+}
+
+#name_of_app,
+#secret_key {
+  background-color: black;
+  color: white;
+  height: 50px;
+  width: 300px;
+  font-size: 25px;
+}
+
+html {
+  --s: 113px;
+  /* control the size*/
+  --c1: #96805a;
+  --c2: #674e23;
+  --c3: #2c2e2a;
+
+  --p: at 45% 40%, #0000 75%, ;
+  --g1: conic-gradient(var(--p) var(--c1) 0);
+  --g2: conic-gradient(var(--p) var(--c2) 0);
+  background:
+    var(--g1), var(--g2) calc(2*var(--s)) 0,
+    var(--g2) calc(3*var(--s)) var(--s),
+    var(--g1) var(--s) var(--s) var(--c3);
+  background-size: calc(4*var(--s)) calc(2*var(--s));
+}

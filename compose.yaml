@@ -1,0 +1,12 @@
+services:
+       totp-container:
+         image: dr.nkit.dev/totp:2
+         labels : 
+           caddy: totp.nkit.dev
+           caddy.reverse_proxy: "{{upstreams 8000}}"
+         networks: 
+           - caddy
+networks:
+  caddy :
+    external: true
+          
